@@ -2,29 +2,31 @@ package net;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
+import java.nio.ByteBuffer;
+import java.nio.channels.ServerSocketChannel;
 import java.nio.charset.StandardCharsets;
 
 public class Server {
   public static void main(String[] args) throws IOException {
-    final var serverSocket = new ServerSocket();
-    serverSocket.bind(new InetSocketAddress("192.168.0.15", 8080));
-    System.out.println(
-        "Server started on " + serverSocket.getLocalSocketAddress().toString().substring(1));
+    final var server = ServerSocketChannel.open();
+    server.bind(new InetSocketAddress("192.168.0.15", 8080));
+    System.out.println("Server started...");
 
     while (true) {
-      final var socket = serverSocket.accept();
+      final var client = server.accept();
+      final var buf = ByteBuffer.allocate(64);
+      final var sb = new StringBuilder();
+      while (client.read(buf) > 0) {
+        buf.flip();
 
-      final var in = socket.getInputStream();
-      final var out = socket.getOutputStream();
-      final var bytes = new byte[128];
-      int rcvd;
-      while ((rcvd = in.read(bytes)) != -1) {
-        System.out.println(
-            socket.getRemoteSocketAddress() + ": " + new String(bytes, StandardCharsets.UTF_8));
-        out.write(bytes);
+        sb.append(new String(buf.array(), 0, buf.limit(), StandardCharsets.UTF_8));
+
+        buf.clear();
       }
-      socket.close();
+
+      System.out.println(client.getRemoteAddress().toString().substring(1) + ": " + sb);
+      client.write(ByteBuffer.wrap(sb.toString().getBytes(StandardCharsets.UTF_8)));
+      client.close();
     }
   }
 }

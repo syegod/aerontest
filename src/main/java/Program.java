@@ -18,7 +18,6 @@ public class Program {
       while (!pub.isConnected()) {
         idle.idle();
       }
-
       unsafeBuffer.putStringUtf8(0, message);
       System.out.println("sending: " + message);
       while (pub.offer(unsafeBuffer) < 0) {

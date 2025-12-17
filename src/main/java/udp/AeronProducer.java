@@ -9,16 +9,18 @@ import org.agrona.concurrent.UnsafeBuffer;
 public class AeronProducer {
 
   public static void main(String[] args) throws InterruptedException {
+    final var channel = "aeron:udp?endpoint=localhost:8080";
+    final var idle = new BackoffIdleStrategy();
+    final var unsafe = new UnsafeBuffer(ByteBuffer.allocate(1024 * 5));
+
     final var sb = new StringBuilder();
     while (sb.length() < 1500) {
       sb.append("Hello World!\n");
     }
-    System.out.println("Start");
-    final var idle = new BackoffIdleStrategy();
-    final var unsafe = new UnsafeBuffer(ByteBuffer.allocate(1024 * 5));
+
     try (final var driver = MediaDriver.launch();
         final var aeron = Aeron.connect();
-        final var pub = aeron.addPublication("aeron:udp?endpoint=localhost:8080", 1)) {
+        final var pub = aeron.addPublication(channel, 1)) {
       while (!pub.isConnected()) {
         idle.idle();
       }

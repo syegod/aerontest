@@ -8,11 +8,12 @@ import org.agrona.concurrent.SleepingIdleStrategy;
 public class AeronConsumer {
 
   public static void main(String[] args) {
+    final var channel = "aeron:udp?endpoint=192.168.0.11:8080";
     final var idle = new SleepingIdleStrategy();
-    new SleepingIdleStrategy();
+
     try (final var driver = MediaDriver.launch();
         final var aeron = Aeron.connect();
-        final var sub = aeron.addSubscription("aeron:udp?endpoint=192.168.0.11:8080", 1)) {
+        final var sub = aeron.addSubscription(channel, 1)) {
       while (true) {
         final var assembler =
             new FragmentAssembler(

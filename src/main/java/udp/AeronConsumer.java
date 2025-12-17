@@ -8,7 +8,7 @@ import org.agrona.concurrent.SleepingIdleStrategy;
 public class AeronConsumer {
 
   public static void main(String[] args) {
-    final var channel = "aeron:udp?endpoint=192.168.0.11:8080";
+    final var channel = "aeron:udp?endpoint=192.168.0.11:40456";
     final var idle = new SleepingIdleStrategy();
 
     try (final var driver = MediaDriver.launch();

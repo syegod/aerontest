@@ -9,7 +9,7 @@ import org.agrona.concurrent.UnsafeBuffer;
 public class AeronProducer {
 
   public static void main(String[] args) throws InterruptedException {
-    final var channel = "aeron:udp?endpoint=localhost:8080";
+    final var channel = "aeron:udp?endpoint=192.168.0.1:40456|interface=192.168.0.11";
     final var idle = new BackoffIdleStrategy();
     final var unsafe = new UnsafeBuffer(ByteBuffer.allocate(1024 * 5));
 
